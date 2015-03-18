@@ -1,0 +1,8 @@
+---
+hosts:
+  postgres:
+    user: root
+    ip: 192.168.0.1
+  web:
+    user: root
+    ip: 192.168.0.2
