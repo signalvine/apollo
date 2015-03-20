@@ -6,8 +6,10 @@ module Apollo
   class Cluster
 
     # Creates a new cluster
-    # opts - The Hash of options (default: {})
-    #   :filename - The complete path to the inventory
+    #
+    # @param opts [Hash].
+    # @option opts [String] :filename The complete path to the inventory file ("#{Dir.pwd}/inventory.yml")
+    # @return [Cluster]
     def initialize(opts = {})
       filename = opts.fetch(:filename, "#{Dir.pwd}/inventory.yml")
       inventory = YAML.load_file(filename)
@@ -21,15 +23,27 @@ module Apollo
       end
     end
 
+    # Gets a host
+    #
+    # @param host [Symbol] The host to get
+    # @return [Hash, nil] Either the host or nil if the host doesn't exist
     def get_host(host)
       @hosts[host]
     end
 
     # Connects to the rabbitmq admin port on the specified host and waits until the specified queue has no messags
-    # opts - The hash of options (default: {})
-    #   :sleep_duration - the time to wait between checking the queue (default: 1)
-    #   :timeout - the maximum amount of time before giving up (default: nil)
-    #   :vhost - the rabbitmq vhost that the queue is on (default: '/')
+    #
+    # @param host [Symbol] The host that the queue is on
+    # @param queue [String] The name of the queue to wait on
+    #
+    # @param opts [Hash]
+    # @option opts [Float]      :sleep_duration The number of seconds (1) to wait between checking the queue
+    # @option opts [Float, nil] :timeout The number of seconds (nil) to wait before throwing an exception
+    # @option opts [String]     :vhost The vhost ('/') that the queue is in
+    #
+    # @raise [RuntimeError] when the host is not in the inventory or the timeout has been exceeded
+    #
+    # @return [void] Only returns when the queue is empty
     def wait_for_queue_drain(host, queue, opts = {})
       raise "host #{host} not configured in the inventory" if @hosts[host].nil?
 
@@ -47,8 +61,13 @@ module Apollo
 
     # Connects to the rabbitmq admin port on the specified host and gets the number of messages waiting in the specified
     # queue
-    # opts - The hash of options (default: {})
-    #   :vhost - the rabbitmq vhost that the queue is on (default: '/')
+    # @param host [Symbol] The host of the rabbitmq server
+    # @param queue [String] The queue to check
+    #
+    # @param opts [Hash]
+    # @option opts [String] :vhost The vhost ('/') that the queue is in
+    #
+    # @return [Integer] The number of messages waiting in the specified queue
     def check_queue_length(host, queue, opts={})
       host = @hosts[host]
       vhost = opts.fetch(:vhost, '/')
@@ -62,6 +81,10 @@ module Apollo
 
     private
 
+    # Parses the inventory that gets read off of disk. It converts the keys to symbols.
+    # @param host_list [Hash]
+    # @return [Hash]
+    # @raise [RuntimeError] when some required fields aren't specified
     def process_host_list(host_list)
       list = {}
       host_list.each do |key, value|
@@ -72,6 +95,9 @@ module Apollo
       list
     end
 
+    # Gets the specified host's proper addressing
+    # @param host [Hash] The host that we want to address
+    # @return [String] The address to connect to the host on
     def address(host)
       unless host['ip'].nil?
         host['ip']
