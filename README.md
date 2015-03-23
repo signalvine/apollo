@@ -1,8 +1,18 @@
 # Apollo
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/apollo`. To experiment with that code, run `bin/console` for an interactive prompt.
+Apollo is a gem for interacting with remote hosts. Its based around the idea of an inventory defining the available
+resources. So for this inventory:
 
-TODO: Delete this and the text above, and describe your gem
+```yaml
+---
+hosts:
+  vagrant:
+    ip: 192.168.100.4
+    user: vagrant
+```
+
+You would be able to run an ssh command by running `cluster.run(:vagrant, '/bin/true')`. This is very much a work in
+progress as I figure out what needs to be in here.
 
 ## Installation
 
@@ -32,7 +42,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/apollo/fork )
+1. Fork it ( https://github.com/signalvine/apollo/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
