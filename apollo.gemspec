@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'apollo/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "apollo"
+  spec.name          = "apollo-tools"
   spec.version       = Apollo::VERSION
   spec.authors       = ['Brendan Tobolaski']
   spec.email         = ['brendan@signalvine.com']
