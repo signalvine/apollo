@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'minitest', '~> 5.5.1'
 
   spec.add_dependency 'rabbitmq_manager', '~> 0.3.0'
+  spec.add_dependency 'net-ssh', '~> 2.9.2'
 end

@@ -1,6 +1,6 @@
 require "apollo/version"
 require "yaml"
-require 'rabbitmq_manager'
+require 'net/ssh'
 
 module Apollo
   class Cluster
@@ -77,6 +77,49 @@ module Apollo
 
       manager = RabbitMQManager.new "http://#{username}:#{password}@#{address host}:#{port}"
       manager.queue(vhost, queue)['messages']
+    end
+
+    # Runs the specified command on the specified host
+    #
+    # @param on [Symbol] The host to run the command on
+    # @param command [String] The command ('/bin/true') to run
+    #
+    # @param opts [Hash] Additional options for the ssh connection. For the complete list, see http://net-ssh.github.io/net-ssh/classes/Net/SSH.html#method-c-start
+    # @option opts [bool] :forward_agent (true) whether to forward the current user's agent
+    # @option opts [bool] :allow_unsuccessful (false) whether a non-zero exit call raises an exception or not
+    #
+    # @return [String]
+    # @raises [RuntimeError] when the host
+    def run(on, command = '/bin/true', opts= {})
+      host = @hosts[on]
+      raise "#{on} doesn't exist in the inventory" if host.nil?
+      opts[:forward_agent] = opts.fetch(:forward_agent, true)
+
+      output = ""
+      rc = 0
+      Net::SSH.start(address(host), host['user'], opts) do |ssh|
+        chan = ssh.open_channel do |ch|
+          ch.exec command do |ch, success|
+            raise "#{command} didn't complete successfully" if not success and not opts.fetch(:allow_unsuccessful, false)
+          end
+
+          ch.on_data do |c, data|
+            output += data
+          end
+
+          ch.on_extended_data do |c, type, data|
+            output += data
+          end
+
+          ch.on_request "exit-status" do |ch, data|
+            rc = data.read_long
+          end
+        end
+
+        chan.wait
+        raise "#{command} didn't complete successfully" unless rc == 0
+        return output
+      end
     end
 
     private

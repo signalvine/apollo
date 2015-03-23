@@ -10,4 +10,6 @@ Vagrant.configure(2) do |config|
 
   # Disable the random key generation so that we can connect in the test suite
   config.ssh.insert_key = false
+
+  config.vm.network "private_network", ip: "192.168.100.4"
 end
