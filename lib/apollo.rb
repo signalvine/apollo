@@ -1,6 +1,7 @@
 require "apollo/version"
 require "yaml"
 require 'net/ssh'
+require 'rabbitmq_manager'
 
 module Apollo
   class Cluster
