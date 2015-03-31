@@ -73,8 +73,8 @@ module Apollo
     def check_queue_length(host, queue, opts={})
       host = @hosts[host]
       vhost = opts.fetch(:vhost, '/')
-      username = CGI.escape host.fetch('rmq_username', 'guest')
-      password = CGI.escape host.fetch('rmq_password', 'guest')
+      username = CGI.escape host.fetch('rmq_admin_username', 'guest')
+      password = CGI.escape host.fetch('rmq_admin_password', 'guest')
       port = host.fetch('rmq_port', 15672)
 
       manager = RabbitMQManager.new "http://#{username}:#{password}@#{address host}:#{port}"
