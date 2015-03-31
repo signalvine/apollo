@@ -1,0 +1,7 @@
+---
+hosts:
+  vagrant:
+    ip: 192.168.100.4
+    user: vagrant
+    rmq_username: apollo
+    rmq_password: apollo

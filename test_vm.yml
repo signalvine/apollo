@@ -1,0 +1,26 @@
+---
+- name: Setup rabbimtq
+  hosts: all
+  user: vagrant
+  sudo: yes
+  tasks:
+    - name: Add the rabbitmq apt key
+      apt_key: url=http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+               state=present
+
+    - name: Add the rabbitmq apt repository
+      apt_repository: repo="deb http://www.rabbitmq.com/debian/ testing main"
+
+    - name: Install rabbitmq
+      apt: name=rabbitmq-server
+           state=present
+
+    - name: setup the mesos user
+      rabbitmq_user: user=apollo
+                     password=apollo
+                     vhost=/
+                     configure_priv=.*
+                     read_priv=.*
+                     write_priv=.*
+                     state=present
+                     tags=administrator

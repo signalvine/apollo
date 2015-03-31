@@ -22,5 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'minitest', '~> 5.5.1'
 
   spec.add_dependency 'rabbitmq_manager', '~> 0.3.0'
+  spec.add_dependency 'bunny', '~> 1.7.0'
+  spec.add_dependency 'json_pure', '~> 1.8.2'
   spec.add_dependency 'net-ssh', '~> 2.9.2'
 end

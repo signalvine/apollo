@@ -12,4 +12,8 @@ Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
 
   config.vm.network "private_network", ip: "192.168.100.4"
+
+  config.vm.provision 'ansible' do |ansible|
+    ansible.playbook = 'test_vm.yml'
+  end
 end

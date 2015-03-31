@@ -2,6 +2,7 @@ require "apollo/version"
 require "yaml"
 require 'net/ssh'
 require 'rabbitmq_manager'
+require 'apollo/rabbitmq'
 
 module Apollo
   class Cluster
@@ -78,6 +79,18 @@ module Apollo
 
       manager = RabbitMQManager.new "http://#{username}:#{password}@#{address host}:#{port}"
       manager.queue(vhost, queue)['messages']
+    end
+
+    # create_rmq_listener creates an exclusive queue with a randomized name bound to the specified exchange with the
+    # specified routing key
+    # @param host [Symbol] the host that the queue is on
+    # @param exchange [String] the exchange to bind the queue to
+    # @param key [String] The routing key to use to bind the queue to the specified exchange
+    # @return [Apollo::Rabbitmq::Listener] A listener listening on the specified queue
+    def create_rmq_listener(host, exchange, key)
+      sym_hash = Hash.new
+      @hosts[host].each { |k, v| sym_hash[k.to_sym] = v}
+      Apollo::Rabbitmq::Listener.new(exchange, key, sym_hash)
     end
 
     # Runs the specified command on the specified host
