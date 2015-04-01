@@ -22,9 +22,8 @@ module Apollo
         @conn.start
         raise 'connection is nil' if @conn.nil?
         @ch = @conn.create_channel
-        x = @ch.direct exchange
         @messages = []
-        @ch.temporary_queue.bind(x, :routing_key => key).subscribe do |delivery_info, metadata, payload|
+        @ch.temporary_queue.bind(exchange, :routing_key => key).subscribe do |delivery_info, metadata, payload|
           @messages << JSON.parse(payload)
         end
       end
