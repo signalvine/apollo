@@ -136,6 +136,17 @@ module Apollo
       end
     end
 
+    # Gets the specified host's proper addressing
+    # @param host [Hash] The host that we want to address
+    # @return [String] The address to connect to the host on
+    def address(host)
+      unless host['ip'].nil?
+        host['ip']
+      else
+        host['hostname']
+      end
+    end
+
     private
 
     # Parses the inventory that gets read off of disk. It converts the keys to symbols.
@@ -150,17 +161,6 @@ module Apollo
         list[key.to_sym] = value
       end
       list
-    end
-
-    # Gets the specified host's proper addressing
-    # @param host [Hash] The host that we want to address
-    # @return [String] The address to connect to the host on
-    def address(host)
-      unless host['ip'].nil?
-        host['ip']
-      else
-        host['hostname']
-      end
     end
   end
 end
