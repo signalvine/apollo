@@ -12,13 +12,15 @@ module Apollo
       # @option opts [String] :rmq_username The username to connect to the rabbitmq server
       # @option opts [String] :rmq_password The password to connect to the rabbitmq server
       # @option opts [String] :address the hostname or ip to connect to the rabbitmq server
+      # @option opts [String] :vhost the vhost to connect to
       # @option opts [Integer] :port the port to connect to the rabbitmq server
       def initialize(exchange, key, opts = {})
         username = CGI.escape opts.fetch(:rmq_username, 'guest')
         password = CGI.escape opts.fetch(:rmq_password, 'guest')
         host = opts.fetch(:ip, opts.fetch(:hostname, '127.0.0.1'))
         port = opts.fetch(:port, 5672)
-        @conn = Bunny.new("amqp://#{username}:#{password}@#{host}:#{port}")
+        vhost = opts.fetch(:vhost, '/')
+        @conn = Bunny.new("amqp://#{username}:#{password}@#{host}:#{port}#{vhost}")
         @conn.start
         raise 'connection is nil' if @conn.nil?
         @ch = @conn.create_channel
