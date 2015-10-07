@@ -86,10 +86,15 @@ module Apollo
     # @param host [Symbol] the host that the queue is on
     # @param exchange [String] the exchange to bind the queue to
     # @param key [String] The routing key to use to bind the queue to the specified exchange
+    #
+    # @param opts [Hash]
+    # @option opts [String] :vhost The vhost to create the listener on
+    #
     # @return [Apollo::Rabbitmq::Listener] A listener listening on the specified queue
-    def create_rmq_listener(host, exchange, key)
+    def create_rmq_listener(host, exchange, key, opts = {})
       sym_hash = Hash.new
       @hosts[host].each { |k, v| sym_hash[k.to_sym] = v}
+      sym_hash = sym_hash.merge(opts)
       Apollo::Rabbitmq::Listener.new(exchange, key, sym_hash)
     end
 
